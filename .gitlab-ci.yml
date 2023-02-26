@@ -1,0 +1,74 @@
+include:
+
+  - project: dev/ci-templates/helm-package
+    file: template.gitlab-ci.yml
+    ref: 1.1.0
+
+  - project: dev/devops/ci-templates/docker
+    file: template.gitlab-ci.yml
+    ref: 1.1.0
+
+ 
+
+variables:
+  HELM_REPO: "https://artifacts.availity.com/artifactory/helm"
+
+stages:
+
+  - test
+  - build
+  - deploy
+
+ 
+
+Run Unit Tests:
+
+  stage: test
+  image: $ARTIFACTORY_REGISTRY/availity/dotnet/sdk:6.0.101-alpine3.14
+  script:
+
+    - apk add --update nodejs npm
+
+    - npm config set registry https://artifacts.availity.com/artifactory/api/npm/
+
+    - dotnet test --runtime linux-x64 --test-adapter-path:. --logger:"junit;LogFilePath=./TestResults/junit-test-result.xml
+
+Build Application:
+
+  extends: .build-docker-image
+
+  stage: build
+
+  variables:
+
+    IMAGE_REPO: availity/yourservice
+
+    IMAGE_TAG: $CI_COMMIT_TAG
+
+    DOCKERFILE_PATH: ./Dockerfile
+
+Deploy to QA:
+
+  stage: deploy
+
+  image: docker.artifacts.availity.com/helm-kubectl:$HELM_VERSION
+
+  script:
+
+    - kubectl config get-contexts
+
+    - kubectl config use-context app-support/clusters:qa-appsupport
+
+    - helm repo add artifactory $HELM_REPO
+
+    - helm repo remove stable
+
+    - helm repo update
+
+    - helm upgrade yourservice artifactory/yourservice -n default --install
+
+  environment:
+
+    name: qa
+
+    url: https://yourserviceqa.availity.com
