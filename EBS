@@ -1,0 +1,18 @@
+provider "aws" {
+  profile = "availity"
+}
+resource "aws_ebs_volume" "ebsvolume" {
+  size = 50
+  encrypted = ture
+  tags = {
+    name = "Availity_Volume1"
+  }
+
+}
+
+#AWS will be our provider
+#Proile will be our AWS user
+#Resource we will use is aws_ebs_volume registerty
+#Size is set to 50GB
+#Depending on the data that will be stored, we can set "encrypted" to true or false
+#Availity_Volume1 will be the volume name
