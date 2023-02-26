@@ -12,7 +12,7 @@ resource "aws_ebs_volume" "ebsvolume" {
 
 #AWS will be our provider
 #Proile will be our AWS user
-#Resource we will use is aws_ebs_volume registerty
+#Resource we will use is aws_ebs_volume registry
 #Size is set to 50GB
 #Depending on the data that will be stored, we can set "encrypted" to true or false
 #Availity_Volume1 will be the volume name
