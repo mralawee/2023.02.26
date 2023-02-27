@@ -1,0 +1,27 @@
+text = open("data.txt", "r")
+  
+jobs = {
+    'job-1': 0,
+    'job-2': 0,
+    'job-3': 0,
+    'job-4': 0,
+    'job-5': 0
+    }
+buildnum = 0
+consecutive = True
+for line in text:
+    line = line.strip()
+    line = line.lower()
+    words = line.split()  
+    for word in words:
+        if "failed" in words:
+            if word in jobs and consecutive == True:
+                jobs[word] = jobs[word] + 1
+            if (word.isnumeric()) and int(word) > int(buildnum):
+                consecutive = True
+                buildnum = word
+            if (word.isnumeric()) and int(word) < int(buildnum):
+                consecutive = False
+                buildnum = word
+for key in list(jobs.keys()):
+    print(key, "had", jobs[key],"consecutive build failures")
